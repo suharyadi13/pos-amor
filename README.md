@@ -1,9 +1,9 @@
-# app_surat
+# POS AMOR
 App POS Amor
 Dibuat dengan : 
 <ul>
 <li>Codeigniter</li>
-<li>Bootstrap Admin LTE</li>
+<li>Bootstrap</li>
 <li>Javascript</li>
 </ul>
  
