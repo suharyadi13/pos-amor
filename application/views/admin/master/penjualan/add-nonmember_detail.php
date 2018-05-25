@@ -1,4 +1,14 @@
- 
+<style>
+#btnNumpad{
+	background-color: #2174c7;
+    color: white;
+    font-size: 1.5em;
+    text-align: -webkit-center;
+	margin:2px !important;
+	cursor:pointer;
+	
+}	
+</style> 
 	<!-- Content Wrapper. Contains page content -->
 
 	<div class="content-wrapper">
@@ -7,7 +17,7 @@
 
 	<!-- form start -->
 	<?php $attribute = Array ("id" => "formtrxid");?>
-	<?php echo form_open('4d111-t1272/?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'',$attribute); ?>
+	<?php echo form_open("#",$attribute); ?>
 	<!-- Main content -->
 	<!-- left POS content-->
 	<div class="col-md-9">
@@ -29,10 +39,10 @@
 	<input type="text" class="form-control" name="qty" id="qty" value="1" onClick="this.value='';"/>
 	</div>
 	</div>
-
+	<input type="hidden" class="form-control" name="submit" id="submit" value="tambah" />
 	<div class="col-md-1">
 	<div class="form-group has-warning"><br/>
-	<button type="submit" name="submit" class="btn btn-success" value="tambah" id="submittambahproduk">
+	<button type="submit" name="submit2" class="btn btn-success" value="tambah" id="submittambahproduk">
 		<i class="fa fa-plus-square"></i></button>
 	</div>
 	</div>
@@ -60,7 +70,7 @@
 				<th width=5%><h4 class="font-extra-bold no-margins text-success"></h4></th>
 				<th width=15%><p class="text-success">SUB TOTAL</h4></th>
 			</thead>
-			<tbody>
+			<tbody  id="tableItem">
 			
 				<?php  
 				$no = 1;
@@ -99,10 +109,70 @@
 	<div class="panel-body list">
 	<div class="col-md-12" style="height:450px;overflow:auto;">
 	<p>No Fak : <b class="badge badge-info"><?php echo $trxid; ?></b></p>
-		
+	<div class="col-md-12" id="ProsesSegment">
+		<div class="formBayar">
+				<table border="0" cellpadding="12" cellspacing="12">
+						<tr>
+						<td colspan="2"><b>TOTAL</b>
+						<input form="formtrxid" type="text" class="form-control" name="total" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;"/>
+						</td>
+						</tr>
+						<tr>
+						<td colspan="2"><b>TOTAL BAYAR</b><input form="formtrxid" type="text" class="form-control" name="bayar" id="bayar" onClick="this.value='';" style="color:red;font-size:27px;font-weight:bold;" /></td>
+						</tr>
+						<tr>
+						<td colspan="2"><b>KEMBALI </b><input form="formtrxid" type="text" class="form-control" name="kembali" id="kembali" style="color:blue;font-size:25px;font-weight:bold;" readonly /></td>
+						</tr>
+						<tr>
+						<td colspan="2">
+							<div class="grid">
+								<?php 
+								for($x=1;$x<10;$x++){
+									echo '<div class="col-md-3" id="btnNumpad" class="btnNumpad" OnClick="hitung('.$x.')">'.$x.'</div>';
+								}
+								?>
+								<div class="col-md-3" id="btnNumpad" class="btnNumpad" OnClick="hitung(0)">0</div>
+								<div class="col-md-3" id="btnNumpad" class="btnNumpad" OnClick="hitung('00')">00</div>
+							</div>
+						</td>
+						</tr>
+						<tr>
+						<td colspan="2">Cash:
+							<select name="banktipe" class="form-control" id="tipebank" form="formtrxid" >
+								<option value="tunai" >Tunai</option>
+								<option value="debit" > K. Debit</option>
+								<option value="kredit" >K. Kredit</option>
+							</select>
+						</td>
+						</tr>
+						
+						<tr>
+						<td colspan="4">
+						<div class="col-md-12" id="banktipe">
+						Nomor : <input type="text"  name="bankno" class="form-control" form="formtrxid" >
+							Bank : <select name="bankmember" class="form-control" id="bankmember" form="formtrxid" >
+								<option value="">Pilih Bank</option>
+
+								<?php
+
+								foreach($bank as $data){ ?>
+									<option value="<?php echo $data->id; ?>"><?php echo $data->name; ?></option>
+
+								<?php } ?>
+							</select>	
+						</div>
+							</td>
+						</tr>
+						</table>
+					</div>
+					<div class="FormBayarfooter">
+					
+					</div>
+	
+	</div>
 	</div>
 	<div class="col-md-12">
-		<div class="col-md-12">
+		<!--<div class="col-md-12">
 		<div class="form-group">
 		<label>TOTAL</label>
 		<input  type="text" class="form-control" name="total" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:17px;font-weight:bold;width:100%;"/>
@@ -112,8 +182,15 @@
 		<a href="#"  class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal" id="btnShow">
 														<i class="fa fa-money"></i> Bayar Transaksi
 														</a>
+		</div>-->
+		<div class="col-md-4">
+		<button type="submit" name="submit" class="btn btn-info btn-sm" value="selesaitrx" id="bayartrx" form="formtrxid">
+		<i class="fa fa-save"></i> Bayar</button>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-4">
+		<button type="submit" name="submit" class="btn btn-primary" id="simpaneditpjl" value="edittrx">Simpan</button>
+		</div>
+		<div class="col-md-4">
 		<a href="<?php echo base_url(); ?>admin/batal_trxpj?nofak=<?php echo $trxid;?>" onclick="javascript: return confirm('Anda akan membatalkan transaksi dengan nomor faktur : <?php echo $trxid; ?> ?')" class="btn btn-danger btn-sm" id="canceltrx"><i class="fa fa-arrow-circle-left"></i> Batalkan</a>
 		</div>
 		</div>
@@ -127,63 +204,7 @@
 	</div><!-- /.box-body -->
 	</div><!-- /.box -->
 	<!-- form edit -->
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="color-line"></div>
-				
-			<div class="modal-body">
-			  <h4 class="modal-title">BAYAR</h4>
-<table border="0" cellpadding="12" cellspacing="12">
-		<tr>
-		<td colspan="2"><b>TOTAL</b>
-		<input form="formtrxid" type="text" class="form-control" name="total" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;"/>
-		</td>
-		</tr>
-		<tr>
-		<td><b>TOTAL BAYAR</b><input form="formtrxid" type="text" class="form-control" name="bayar" id="bayar" onClick="this.value='';" style="color:red;font-size:27px;font-weight:bold;" /></td>
-		<td><b>KEMBALI </b><input form="formtrxid" type="text" class="form-control" name="kembali" id="kembali" style="color:blue;font-size:25px;font-weight:bold;" readonly /></td>
-		</tr>
-		<tr>
-		<td colspan="2">Cash:
-			<select name="banktipe" class="form-control" id="tipebank" form="formtrxid" >
-				<option value="tunai" >Tunai</option>
-				<option value="debit" > K. Debit</option>
-				<option value="kredit" >K. Kredit</option>
-			</select>
-		</td>
-		</tr>
-		
-		<tr>
-		<td colspan="4">
-		<div class="col-md-12" id="banktipe">
-		Nomor : <input type="text"  name="bankno" class="form-control" form="formtrxid" >
-            Bank : <select name="bankmember" class="form-control" id="bankmember" form="formtrxid" >
-                <option value="">Pilih Bank</option>
-
-                <?php
-
-                foreach($bank as $data){ ?>
-                    <option value="<?php echo $data->id; ?>"><?php echo $data->name; ?></option>
-
-                <?php } ?>
-			</select>	
-		</div>
-			</td>
-		</tr>
-		</table>
-	</div>
-			<div class="modal-footer">
-			<button type="submit" name="submit" class="btn btn-success" value="selesaitrx" id="bayartrx" form="formtrxid">
-			<i class="fa fa-save"></i> Bayar</button>
-				<a href="<?php echo base_url(); ?>admin/batal_trxpj?nofak=<?php echo $trxid;?>" class="btn btn-danger btn-sm"><i class="fa fa-arrow-circle-left"></i> Batal</a>		
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				      <button type="submit" name="submit" class="btn btn-primary" id="simpaneditpjl" value="edittrx">Simpan</button>
-                              
-			</div>
-		</div>
-	</div>
-	</div>
+	
 	<!-- end form edit -->			
 
 	</div>
@@ -244,6 +265,48 @@
 	
 	
 	<script>
+	$(document).ready(function(){
+		$("#formtrxid").submit(function(){
+			var DataForm = $("#formtrxid").serialize();
+			
+			if($("#kdproduk").val() ==""){	
+				alert("Produk belum dipilih")
+				return false;	
+			}else{
+				
+				
+				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
+					alert(result.detail.length);
+					if(result.detail.length >0 ){
+						var AllItem = "";
+						for (var x=0;x<result.detail.length;x++){
+						var data = result.detail[x];
+						var item = '<tr class="gradeU"><td>';
+						item += '<a href="#" data-toggle="modal" data-target="#myModaledit" id="btnShowitem" ideditpro="'+data.detailID +'" nampro="'+data.productName+'" harpro="'+data.detailPrice+'" qtypro="'+data.detailQty+'" nofakedit="<?php echo $trxid;?>" kdproduk="'+data.productBarcode +'">';
+						item += '<p>'+data.productName+'</p>';
+						item += '</a></i></b>';
+						item += '</td><input type="hidden" class="form-control" name="harga" value=" '+data.detailPrice+'" readonly />';
+						item += '<td><b>'+data.detailQty +'</b></td>';
+						item += '<td><input type="text"  class="form-control" name="subtotal" value=" '+data.detailSubtotal+'" readonly /></td>';
+						item += '<input type="hidden" name="qtyremove" id="qtyremove"></tr>';
+						AllItem +=item;
+						}
+						$("#tableItem").html(AllItem);
+					}
+				},"json")
+				return false;	
+			}
+			$("#kdproduk").val("");
+			return false;
+		})
+		
+	})
+	function hitung(val){
+		var valNew = $("#bayar").val()+""+val;
+		$("#bayar").val(parseInt(valNew));
+		var TotalHarga = "<?php echo $total_harga ?>";
+		$("#kembali").val(parseInt(valNew) - parseInt(TotalHarga))
+	}
 	window.onkeydown = function(e) {
     if ((e.which || e.keyCode) == 118) {
         $( "#btnShow" ).click();
