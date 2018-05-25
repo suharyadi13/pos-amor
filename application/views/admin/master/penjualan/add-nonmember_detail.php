@@ -276,7 +276,7 @@
 				
 				
 				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
-					alert(result.detail.length);
+					
 					if(result.detail.length >0 ){
 						var AllItem = "";
 						for (var x=0;x<result.detail.length;x++){
