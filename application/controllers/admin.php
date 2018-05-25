@@ -43,7 +43,9 @@ class Admin extends CI_Controller {
 			'admin_valid' => true
 			);
 			$this->session->set_userdata($data);
-			redirect('4d111');
+			$invno = $this->getNewTrxID(); // ambil no transaksi terbaru
+			redirect('4d111-t1272/?__fn='.$this->encryption->encode($invno).'&submit='.$this->encryption->encode("newtrx"));
+			//redirect('4d111');
 		} else {
 			redirect('auth');
 		}
@@ -70,6 +72,35 @@ class Admin extends CI_Controller {
 		$today=date('Y-m-d');
 		$a['lev_user']	= $level;
 		$this->cek_aktif();
+		
+		$invno = $this->getNewTrxID(); // ambil no transaksi terbaru
+		
+		$todaytgl=date('Y-m-d');
+		$a['trxid'] = $invno;
+		$a['total']= $this->model_admin->tampil_trx_sum_user($user)->result();
+		$a['trxtoday_tot']	= $this->model_admin->tampil_trx_user_today($user,$today)->num_rows();
+		$a['trxuser_tot']	= $this->model_admin->tampil_trx_user($user)->num_rows();
+		$a['trxunclose_tot']	= $this->model_admin->tampil_trx_unclose_tot($user)->num_rows();
+		$a['trx_tot_prod']	= $this->model_admin->tampil_trx_tot_prod($user)->result();
+		$a['detailunclose']= $this->model_admin->tampil_trx_unclose_tot($user)->result();
+		$data = $this->model_master->cek_trx_close($identity,$user,$todaytgl);
+		$statustrx="";
+		$trxidclose="";
+		$trxTotalRealStat="";
+		foreach($data->result() as $row)
+		{
+			$statustrx = $row->trxStatus;
+			$trxidclose = $row->trxID;
+			$trxTotalRealStat = $row->trxTotalRealStat;
+		}
+		$a['trxstat']	= $statustrx;
+		$a['trxTotalRealStat']	= $trxTotalRealStat;
+		$a['trxidclose']	= $trxidclose;
+		$a['page']	= "home";
+		
+		$this->load->view('admin/template', $a);
+	}
+	function getNewTrxID(){
 		$trxid= mysql_fetch_array(mysql_query('SELECT * from as_sales_transactions order by trxID desc limit 1;'));
 		$trxdate = $trxid['trxDate'];
 		$invoiceID = $trxid['invoiceID'];
@@ -104,32 +135,9 @@ class Admin extends CI_Controller {
 		}
 		
 		$invno = "POS".date('m')."-".$invno;
-		$todaytgl=date('Y-m-d');
-		$a['trxid'] = $invno;
-		$a['total']= $this->model_admin->tampil_trx_sum_user($user)->result();
-		$a['trxtoday_tot']	= $this->model_admin->tampil_trx_user_today($user,$today)->num_rows();
-		$a['trxuser_tot']	= $this->model_admin->tampil_trx_user($user)->num_rows();
-		$a['trxunclose_tot']	= $this->model_admin->tampil_trx_unclose_tot($user)->num_rows();
-		$a['trx_tot_prod']	= $this->model_admin->tampil_trx_tot_prod($user)->result();
-		$a['detailunclose']= $this->model_admin->tampil_trx_unclose_tot($user)->result();
-		$data = $this->model_master->cek_trx_close($identity,$user,$todaytgl);
-		$statustrx="";
-		$trxidclose="";
-		$trxTotalRealStat="";
-		foreach($data->result() as $row)
-		{
-			$statustrx = $row->trxStatus;
-			$trxidclose = $row->trxID;
-			$trxTotalRealStat = $row->trxTotalRealStat;
-		}
-		$a['trxstat']	= $statustrx;
-		$a['trxTotalRealStat']	= $trxTotalRealStat;
-		$a['trxidclose']	= $trxidclose;
-		$a['page']	= "home";
 		
-		$this->load->view('admin/template', $a);
+		return $invno;
 	}
-	
 	function __construct(){
 		parent::__construct();
 		$this->load->helper(array('url','form'));
@@ -241,23 +249,31 @@ class Admin extends CI_Controller {
 		$a['telpkirim'] = $this->input->post('telpkirim');
 		$productBarcode1 = $this->input->post('kodeproduk');
 		$hasil = implode(" ", array_slice(explode(" ", $productBarcode1), 0, 1));
-		$productBarcode = $hasil;
+		$productBarcode = trim($hasil," ");
 		$qty = $this->input->post('qty');
 		$data = $this->model_master->tampil_produk_id_trx($productBarcode);
         $a['bank'] = $this->model_master->tampil_bank();
 		$a['prodamor']= $this->model_master->tampil_produk_amor($identity)->result();
 		$a['cat']= $this->model_master->tampil_kategori_prod()->result();
+		if($this->input->post('submit') ==false){
+			$a['submit'] = $this->encryption->decode($this->input->get('submit'));
+		}else{
+			$a['submit'] = $this->input->post('submit');
+		}
 		
-		if($this->input->post('submit') == "newtrx")
+		if($a['submit'] == "newtrx")
 		{
-			
-			$object = array(
-			'invoiceID' => $invoiceID,
-			'trxDate' =>$tgltrx,
-			'userID' =>$user,
-			'isfinish' =>0
-			);
-			$this->db->insert('as_sales_transactions', $object); 
+			$query = $this->db->query("SELECT * FROM as_sales_transactions WHERE invoiceID ='".$invoiceID."' ");
+			if(count($query->row_array()) <= 0){
+				$object = array(
+				'invoiceID' => $invoiceID,
+				'trxDate' =>$tgltrx,
+				'userID' =>$user,
+				'isfinish' =>0
+				);
+				$this->db->insert('as_sales_transactions', $object);
+					
+			}
 			$a['detail']= $this->model_master->tampilkan_detail_transaksi($invoiceID,$identity)->result();
 			$a['total']= 0;
 			$a['page'] = "master/penjualan/add-nonmember_detail";
@@ -269,8 +285,9 @@ class Admin extends CI_Controller {
 		
 		
 		
-		else if($this->input->post('submit') == "tambah")
+		else if($a['submit'] == "tambah")
 		{
+			
 			if($data){
 			$price=0;
 			$detailprice=0;
@@ -329,11 +346,13 @@ class Admin extends CI_Controller {
 			$this->db->update('as_products', $object); 
 			$a['detail']= $this->model_master->tampilkan_detail_transaksi($invoiceID,$identity)->result();
 			$a['page'] = "master/penjualan/add-nonmember_detail";
-			$a['title'] = "PENJUALAN->non-MEMBER->Transaksi";
-			$a['zona'] = $this->model_master->tampil_zona()->result_object();
-			$this->load->view('admin/template',$a);
+			//$a['title'] = "PENJUALAN->non-MEMBER->Transaksi";
+			//$a['zona'] = $this->model_master->tampil_zona()->result_object();
+			//$this->load->view('admin/template',$a);
+			echo json_encode($a);
+			
 		}
-		else if($this->input->post('submit') == "edittrxitem")
+		else if($a['submit'] == "edittrxitem")
 		{
 
 			$ideditpro = $this->input->post('ideditpro');
@@ -382,9 +401,10 @@ class Admin extends CI_Controller {
 			$a['page'] = "master/penjualan/add-nonmember_detail";
 			$a['title'] = "Transaksi";
 			$a['zona'] = $this->model_master->tampil_zona()->result_object();
-			$this->load->view('admin/template',$a);
+			//$this->load->view('admin/template',$a);
+			echo json_encode($a);
 		}
-		else if($this->input->post('submit') == 'selesaitrx')
+		else if($a['submit'] == 'selesaitrx')
 		{
 			$memberID= "01";
 			$identityID=$this->session->userdata('identityID');
@@ -451,12 +471,12 @@ class Admin extends CI_Controller {
 			$a['bayar']= $trxPaynum;
 			$a['kembali']= $trxChangenum;
 			$a['detail']= $this->model_master->tampilkan_detail_transaksi($invoiceID,$identity)->result();
-			$this->load->view('admin/master/penjualan/print-act',$a);
-			
+			//$this->load->view('admin/master/penjualan/print-act',$a);
+			echo json_encode($a);
 
 
 		}
-		else if($this->input->post('submit') == 'deltrxitem')
+		else if($a['submit'] == 'deltrxitem')
 		{
 			$ideditpro = $this->input->post('ideditpro');
 			$nofak = $this->input->post('nofak');
@@ -494,7 +514,9 @@ class Admin extends CI_Controller {
 			$a['title'] = "No Transaksi : $invoiceID ";
 			$a['zona'] = $this->model_master->tampil_zona()->result_object();
 			$this->load->view('admin/template',$a);
+			//echo json_encode($a);
 		}
+		
 
 	}
 
