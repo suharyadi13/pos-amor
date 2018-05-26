@@ -114,7 +114,7 @@
 				<table border="0" cellpadding="12" cellspacing="12">
 						<tr>
 						<td colspan="2"><b>TOTAL</b>
-						<input form="formtrxid" type="text" class="form-control" name="total" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;"/>
+						<input form="formtrxid" type="text" class="form-control" name="total" id="total" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;"/>
 						</td>
 						</tr>
 						<tr>
@@ -152,9 +152,7 @@
 						Nomor : <input type="text"  name="bankno" class="form-control" form="formtrxid" >
 							Bank : <select name="bankmember" class="form-control" id="bankmember" form="formtrxid" >
 								<option value="">Pilih Bank</option>
-
 								<?php
-
 								foreach($bank as $data){ ?>
 									<option value="<?php echo $data->id; ?>"><?php echo $data->name; ?></option>
 
@@ -279,19 +277,22 @@
 					
 					if(result.detail.length >0 ){
 						var AllItem = "";
+						var TotalHarga = 0;
 						for (var x=0;x<result.detail.length;x++){
-						var data = result.detail[x];
-						var item = '<tr class="gradeU"><td>';
-						item += '<a href="#" data-toggle="modal" data-target="#myModaledit" id="btnShowitem" ideditpro="'+data.detailID +'" nampro="'+data.productName+'" harpro="'+data.detailPrice+'" qtypro="'+data.detailQty+'" nofakedit="<?php echo $trxid;?>" kdproduk="'+data.productBarcode +'">';
-						item += '<p>'+data.productName+'</p>';
-						item += '</a></i></b>';
-						item += '</td><input type="hidden" class="form-control" name="harga" value=" '+data.detailPrice+'" readonly />';
-						item += '<td><b>'+data.detailQty +'</b></td>';
-						item += '<td><input type="text"  class="form-control" name="subtotal" value=" '+data.detailSubtotal+'" readonly /></td>';
-						item += '<input type="hidden" name="qtyremove" id="qtyremove"></tr>';
-						AllItem +=item;
+							var data = result.detail[x];
+							var item = '<tr class="gradeU"><td>';
+							item += '<a href="#" data-toggle="modal" data-target="#myModaledit" id="btnShowitem" ideditpro="'+data.detailID +'" nampro="'+data.productName+'" harpro="'+data.detailPrice+'" qtypro="'+data.detailQty+'" nofakedit="<?php echo $trxid;?>" kdproduk="'+data.productBarcode +'">';
+							item += '<p>'+data.productName+'</p>';
+							item += '</a></i></b>';
+							item += '</td><input type="hidden" class="form-control" name="harga" value=" '+data.detailPrice+'" readonly />';
+							item += '<td><b>'+data.detailQty +'</b></td>';
+							item += '<td><input type="text"  class="form-control" name="subtotal" value=" '+data.detailSubtotal+'" readonly /></td>';
+							item += '<input type="hidden" name="qtyremove" id="qtyremove"></tr>';
+							AllItem +=item;
+							TotalHarga += parseInt(data.detailSubtotal);
 						}
 						$("#tableItem").html(AllItem);
+						$("#total").val(TotalHarga);
 					}
 				},"json")
 				return false;	
