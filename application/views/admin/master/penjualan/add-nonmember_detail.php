@@ -23,9 +23,7 @@
 	<div class="col-md-9">
 
 	<div class="hpanel hbgwhite">
-	<div class="panel-body list">
-
-
+	<div class="panel-body list" >
 	<div class="col-md-9">
 	<div class="form-group has-warning">
 	<input type="hidden" class="form-control" name="kdproduk" id="kdproduk" />
@@ -106,19 +104,23 @@
 	<!-- right POS content-->
 	<div class="col-md-3">
 	<div class="hpanel">
-	<div class="panel-body list">
+	<div class="panel-body list" style="padding:10px 5px !important;">
 	<div class="col-md-12" style="height:450px;overflow:auto;">
 	<p>No Fak : <b class="badge badge-info"><?php echo $trxid; ?></b></p>
 	<div class="col-md-12" id="ProsesSegment">
 		<div class="formBayar">
 				<table border="0" cellpadding="12" cellspacing="12">
 						<tr>
-						<td colspan="2"><b>TOTAL</b>
-						<input form="formtrxid" type="text" class="form-control" name="total" id="total" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;"/>
+						<td width="35%"><b><small>DISKON %</small></b><input form="formtrxid" type="text" class="form-control" name="diskon" id="diskon" onClick="this.value='0'" value="0" style="color:red;font-size:27px;font-weight:bold;" /></td>
+						<td align="right"><b>SUB TOTAL</b><input form="formtrxid" type="text" class="form-control" name="total" id="total" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;text-align:right" /></td>
+						</tr>
+						<tr>
+						<td colspan="2">
+						<b><small>   TOTAL</small></b><input form="formtrxid" type="text" class="form-control" name="diskonTotal" id="diskonTotal"  value="<?php echo number_format($total_harga); ?>" readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;text-align:right" />
 						</td>
 						</tr>
 						<tr>
-						<td colspan="2"><b>TOTAL BAYAR</b><input form="formtrxid" type="text" class="form-control" name="bayar" id="bayar" onClick="this.value='';" style="color:red;font-size:27px;font-weight:bold;" /></td>
+						<td colspan="2"><b>TOTAL BAYAR</b><input form="formtrxid" type="text" class="form-control" name="bayar" id="bayar" onClick="this.value='0';" value="0" style="color:red;font-size:27px;font-weight:bold;" /></td>
 						</tr>
 						<tr>
 						<td colspan="2"><b>KEMBALI </b><input form="formtrxid" type="text" class="form-control" name="kembali" id="kembali" style="color:blue;font-size:25px;font-weight:bold;" readonly /></td>
@@ -263,6 +265,9 @@
 	
 	
 	<script>
+	var TotalHarga = "<?php echo $total_harga ?>";
+	var TotalDiskon = "<?php echo $total_harga ?>";
+	var kembali=0;
 	$(document).ready(function(){
 		$("#formtrxid").submit(function(){
 			var DataForm = $("#formtrxid").serialize();
@@ -277,7 +282,7 @@
 					
 					if(result.detail.length >0 ){
 						var AllItem = "";
-						var TotalHarga = 0;
+						TotalHarga = 0;// reset nilai yang sudah diambil dengan PHP
 						for (var x=0;x<result.detail.length;x++){
 							var data = result.detail[x];
 							var item = '<tr class="gradeU"><td>';
@@ -293,6 +298,8 @@
 						}
 						$("#tableItem").html(AllItem);
 						$("#total").val(TotalHarga);
+						$("#total").number( true, 0 );
+						$('#diskon').trigger('keyup');
 					}
 				},"json")
 				return false;	
@@ -300,14 +307,25 @@
 			$("#kdproduk").val("");
 			return false;
 		})
-		
+		$("#diskon").keyup(function(){
+			var NilaiDiskon = parseInt($("#diskon").val()) * parseInt(TotalHarga) / 100;
+			TotalDiskon = parseInt(TotalHarga)-parseInt(NilaiDiskon);
+			$("#diskonTotal").val(TotalDiskon);
+			$("#diskonTotal").number( true, 0 );
+
+			hitung("");
+		})	
 	})
+	 
 	function hitung(val){
 		var valNew = $("#bayar").val()+""+val;
 		$("#bayar").val(parseInt(valNew));
-		var TotalHarga = "<?php echo $total_harga ?>";
-		$("#kembali").val(parseInt(valNew) - parseInt(TotalHarga))
+		$("#bayar").number( true, 0 );
+		kembali = parseInt(valNew) - parseInt(TotalDiskon)
+		$("#kembali").val(kembali);
+		$("#kembali").number( false, 0 );
 	}
+	
 	window.onkeydown = function(e) {
     if ((e.which || e.keyCode) == 118) {
         $( "#btnShow" ).click();
