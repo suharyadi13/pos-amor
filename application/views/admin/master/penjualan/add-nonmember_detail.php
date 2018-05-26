@@ -100,30 +100,34 @@
 	</div>
 	</div>
 	<!-- left POS content-->
-
+	<?php echo form_close(); ?>
+	
+	<?php $attribute2 = Array ("id" => "formBayar");?>
+	<?php echo form_open("#",$attribute2); ?>
 	<!-- right POS content-->
 	<div class="col-md-3">
 	<div class="hpanel">
 	<div class="panel-body list" style="padding:10px 5px !important;">
 	<div class="col-md-12" style="height:450px;overflow:auto;">
 	<p>No Fak : <b class="badge badge-info"><?php echo $trxid; ?></b></p>
+	<input type="hidden" class="form-control" name="submit" id="submitBayar" value="selesaitrx" />
 	<div class="col-md-12" id="ProsesSegment">
 		<div class="formBayar">
 				<table border="0" cellpadding="12" cellspacing="12">
 						<tr>
-						<td width="35%"><b><small>DISKON %</small></b><input form="formtrxid" type="text" class="form-control" name="diskon" id="diskon" onClick="this.value='0'" value="0" style="color:red;font-size:27px;font-weight:bold;" /></td>
-						<td align="right"><b>SUB TOTAL</b><input form="formtrxid" type="text" class="form-control" name="total" id="total" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;text-align:right" /></td>
+						<td width="35%"><b><small>DISKON %</small></b><input form="formBayar" type="text" class="form-control" name="diskon" id="diskon" onClick="this.value='0'" value="0" style="color:red;font-size:27px;font-weight:bold;" /></td>
+						<td align="right"><b>SUB TOTAL</b><input form="formBayar" type="text" class="form-control" name="subtotal" id="subtotal" value="<?php $total_harga = $total; echo number_format($total_harga, 0, '.', ',');?>" id="total"  readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;text-align:right" /></td>
 						</tr>
 						<tr>
 						<td colspan="2">
-						<b><small>   TOTAL</small></b><input form="formtrxid" type="text" class="form-control" name="diskonTotal" id="diskonTotal"  value="<?php echo number_format($total_harga); ?>" readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;text-align:right" />
+						<b><small>   TOTAL</small></b><input form="formBayar" type="text" class="form-control" name="total" id="diskonTotal"  value="<?php echo number_format($total_harga); ?>" readonly style="background-color:#0a0a0a;color:#fff;font-size:25px;font-weight:bold;text-align:right" />
 						</td>
 						</tr>
 						<tr>
-						<td colspan="2"><b>TOTAL BAYAR</b><input form="formtrxid" type="text" class="form-control" name="bayar" id="bayar" onClick="this.value='0';" value="0" style="color:red;font-size:27px;font-weight:bold;" /></td>
+						<td colspan="2"><b>TOTAL BAYAR</b><input form="formBayar" type="text" class="form-control" name="bayar" id="bayar" onClick="this.value='0';" value="0" style="color:red;font-size:27px;font-weight:bold;" /></td>
 						</tr>
 						<tr>
-						<td colspan="2"><b>KEMBALI </b><input form="formtrxid" type="text" class="form-control" name="kembali" id="kembali" style="color:blue;font-size:25px;font-weight:bold;" readonly /></td>
+						<td colspan="2"><b>KEMBALI </b><input form="formBayar" type="text" class="form-control" name="kembali" id="kembali" style="color:blue;font-size:25px;font-weight:bold;" readonly /></td>
 						</tr>
 						<tr>
 						<td colspan="2">
@@ -140,7 +144,8 @@
 						</tr>
 						<tr>
 						<td colspan="2">Cash:
-							<select name="banktipe" class="form-control" id="tipebank" form="formtrxid" >
+						<input type="hidden" name="harga" id="hargaModal" value="">
+							<select name="banktipe" class="form-control" id="tipebank" form="formBayar" >
 								<option value="tunai" >Tunai</option>
 								<option value="debit" > K. Debit</option>
 								<option value="kredit" >K. Kredit</option>
@@ -151,8 +156,8 @@
 						<tr>
 						<td colspan="4">
 						<div class="col-md-12" id="banktipe">
-						Nomor : <input type="text"  name="bankno" class="form-control" form="formtrxid" >
-							Bank : <select name="bankmember" class="form-control" id="bankmember" form="formtrxid" >
+						Nomor : <input type="text"  name="bankno" class="form-control" form="formBayar" >
+							Bank : <select name="bankmember" class="form-control" id="bankmember" form="formBayar" >
 								<option value="">Pilih Bank</option>
 								<?php
 								foreach($bank as $data){ ?>
@@ -184,7 +189,7 @@
 														</a>
 		</div>-->
 		<div class="col-md-4">
-		<button type="submit" name="submit" class="btn btn-info btn-sm" value="selesaitrx" id="bayartrx" form="formtrxid">
+		<button type="submit" name="submit" class="btn btn-info btn-sm" value="selesaitrx" id="bayartrx" form="formBayar">
 		<i class="fa fa-save"></i> Bayar</button>
 		</div>
 		<div class="col-md-4">
@@ -199,6 +204,7 @@
 	</div>
 	</div>
 
+	<?php echo form_close(); ?>
 	<div class="box-body">
 
 	</div><!-- /.box-body -->
@@ -246,11 +252,9 @@
 		<div class="col-md-2"><br/>
 		<button type="submit" name="submit" class="btn btn-sm btn-info" id="verifikasihapitem" value="deltrxitem" form="formtrxid"><i class="fa fa-check-circle-o">
 		</i> Verifikasi</button>
-		
 		</div>
 		<hr/>
 		</div>
-  		
   		<button type="submit" name="submit" class="btn btn-sm btn-success" id="simpaneditpjl" value="edittrxitem" form="formtrxid"><i class="fa fa-save">
 		</i> Simpan</button>
 		<button type="submit" name="submit" class="btn  btn-sm btn-danger" id="hapustrxitem">Batal Transaksi Item</button>
@@ -276,13 +280,12 @@
 				alert("Produk belum dipilih")
 				return false;	
 			}else{
-				
-				
+				$("#submit").val("tambah");
 				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
-					
 					if(result.detail.length >0 ){
 						var AllItem = "";
 						TotalHarga = 0;// reset nilai yang sudah diambil dengan PHP
+						hargaModal = 0;
 						for (var x=0;x<result.detail.length;x++){
 							var data = result.detail[x];
 							var item = '<tr class="gradeU"><td>';
@@ -295,11 +298,14 @@
 							item += '<input type="hidden" name="qtyremove" id="qtyremove"></tr>';
 							AllItem +=item;
 							TotalHarga += parseInt(data.detailSubtotal);
+							hargaModal += parseInt(data.detailPrice);
 						}
 						$("#tableItem").html(AllItem);
-						$("#total").val(TotalHarga);
-						$("#total").number( true, 0 );
+						$("#subtotal").val(TotalHarga);
+						$("#subtotal").number( true, 0 );
+						$("#hargaModal").val()
 						$('#diskon').trigger('keyup');
+						
 					}
 				},"json")
 				return false;	
@@ -312,9 +318,30 @@
 			TotalDiskon = parseInt(TotalHarga)-parseInt(NilaiDiskon);
 			$("#diskonTotal").val(TotalDiskon);
 			$("#diskonTotal").number( true, 0 );
-
 			hitung("");
 		})	
+		$("#bayartrx").click(function(){
+			var DataForm = $("#formBayar").serialize();
+			$("#submit").val("selesaitrx");
+			alert($("#submit").val());
+			if(TotalHarga <=0){
+				alert("Belum ada barang yang harus dibayar");
+			}else{
+				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
+						
+				},"json")
+					
+			}
+			return false;	
+		})
+		$("#simpaneditpjl").click(function(){
+			
+			return false;	
+		})
+		$("#bayartrx").click(function(){
+			
+			return false;	
+		})
 	})
 	 
 	function hitung(val){
