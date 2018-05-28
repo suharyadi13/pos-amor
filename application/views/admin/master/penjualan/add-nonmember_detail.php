@@ -263,11 +263,12 @@
 	</div>
 	</div>
 	</div>
+	<div id="print" style="display:none;"></div>
   	<!-- end form edit -->			
   	
 	
 	
-	
+	<script language="javascript" src="<?php echo site_url();?>assets/js/jQuery-print.js"></script>
 	<script>
 	var TotalHarga = "<?php echo $total_harga ?>";
 	var TotalDiskon = "<?php echo $total_harga ?>";
@@ -323,13 +324,18 @@
 		$("#bayartrx").click(function(){
 			var DataForm = $("#formBayar").serialize();
 			$("#submit").val("selesaitrx");
-			alert($("#submit").val());
 			if(TotalHarga <=0){
 				alert("Belum ada barang yang harus dibayar");
 			}else{
 				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
-						
-				},"json")
+					$("#print").html(result);
+					w=window.open();
+					w.document.write($('#print').html());
+					w.print();
+					w.close();
+					$('#print').html("")
+					document.location.href =  "<?php  echo base_url('admin'); ?>"; 
+				})
 					
 			}
 			return false;	

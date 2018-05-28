@@ -471,8 +471,8 @@ class Admin extends CI_Controller {
 			$a['bayar']= $trxPaynum;
 			$a['kembali']= $trxChangenum;
 			$a['detail']= $this->model_master->tampilkan_detail_transaksi($invoiceID,$identity)->result();
-			//$this->load->view('admin/master/penjualan/print-act',$a);
-			echo json_encode($a);
+			$this->load->view('admin/master/penjualan/print-act',$a);
+			//echo json_encode($a);
 
 
 		}

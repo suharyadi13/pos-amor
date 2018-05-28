@@ -81,15 +81,3 @@ table.header,.tr,.td { border: none; text-align:left; padding:2px; }
 						
 						
 	
-	<script type="text/javascript">
-      window.onload = function() { window.print();document.location.href =  "<?php  echo base_url('admin'); ?>"; }
- </script>
- 
- 
- <script>
-	window.onkeypress = function(e) {
-    if ((e.which || e.keyCode) == 13) {
-        $("#printfinish").click();
-    }
-}
-	</script>
