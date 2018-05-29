@@ -492,18 +492,25 @@ class Admin extends CI_Controller {
 				{
 					$this->model_master->hapus_trxpj($ideditpro);
 					$object = array(
-			'productStock' => $qtypro
-			);
-			$this->db->where('productBarcode', $productBarcode);
-			$this->db->where('identityID', $identity);
-			$this->db->update('as_products', $object); 
-					redirect('admin/addtpj_nonmemberdetail/?__fn='.$this->encryption->encode($nofak).'');
+						'productStock' => $qtypro
+						);
+					$this->db->where('productBarcode', $productBarcode);
+					$this->db->where('identityID', $identity);
+					$this->db->update('as_products', $object); 
+					$a['message'] = "";
+					//redirect('admin/addtpj_nonmemberdetail/?__fn='.$this->encryption->encode($nofak).'');
+				}else{
+					$a['message'] = "User tidak memiliki akses pembatalan";
 				}
+				
 			}
 			else{
-			redirect('admin/addtpj_nonmemberdetail/?__fn='.$this->encryption->encode($nofak).'');
+				//redirect('admin/addtpj_nonmemberdetail/?__fn='.$this->encryption->encode($nofak).'');
+				$a['message'] = "Hapus Item Gagal,password salah";
 			}
-
+			
+			$a['detail']= $this->model_master->tampilkan_detail_transaksi($invoiceID,$identity)->result();
+			echo json_encode($a);
 		}
 		else
 		{

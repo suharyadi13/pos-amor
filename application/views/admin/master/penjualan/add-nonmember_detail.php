@@ -218,16 +218,18 @@
 	
 		<!-- form edit -->
   	<div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+	<?php $attribute2 = Array ("id" => "formEdit");?>
+	<?php echo form_open("#",$attribute2); ?>
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="color-line"></div>
-				
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>		
 			<div class="modal-body">
   		<div class="form-group">
-  			<input type="hidden" name="kdproduk" id="productbarcode1" form="formtrxid">
-			<input type="hidden" name="qtybef" id="qtybef" form="formtrxid">
-  			<input type="hidden" name="nofak" value="<?php echo $trxid;?>" form="formtrxid">
-  			<input type="hidden" name="ideditpro" id="ideditpro" form="formtrxid">
+  			<input type="hidden" name="kdproduk" id="productbarcode1" form="formEdit">
+			<input type="hidden" name="qtybef" id="qtybef" form="formEdit">
+  			<input type="hidden" name="nofak" value="<?php echo $trxid;?>" form="formEdit">
+  			<input type="hidden" name="ideditpro" id="ideditpro" form="formEdit">
   			<label for="exampleInputEmail1">Nama Produk</label>
   			<input type="text" class="form-control" name="nampro" id="nampro" readonly/>
   		</div>
@@ -237,31 +239,33 @@
   		</div>
   		<div class="form-group">
   			<label for="exampleInputEmail1">Quantitas</label>
-  			<input type="text" class="form-control" name="qtypro" id="qtypro" onClick="this.value='';" form="formtrxid" />
+  			<input type="text" class="form-control" name="qtypro" id="qtypro" onClick="this.value='';" form="formEdit" />
   		</div>
 		<div class="col-md-12" id="verifikasi">
 		<center><h3>Membutuhkan Verifikasi!</h3></center>
 		<div class="col-md-5">
 		<label for="exampleInputEmail1">Supervisor ID</label>
-	    <input type="text" class="form-control" name="supid" id="supid" form="formtrxid" />
+	    <input type="text" class="form-control" name="supid" id="supid" form="formEdit" />
 		</div>
 		<div class="col-md-5">
 		<label for="exampleInputEmail1">Password</label>
-		<input type="password" class="form-control" name="suppass" form="formtrxid" />
+		<input type="password" class="form-control" name="suppass" form="formEdit" />
 		</div>
 		<div class="col-md-2"><br/>
-		<button type="submit" name="submit" class="btn btn-sm btn-info" id="verifikasihapitem" value="deltrxitem" form="formtrxid"><i class="fa fa-check-circle-o">
+		<button type="button" name="submit" class="btn btn-sm btn-info" id="verifikasihapitem" value="deltrxitem" form="formEdit"><i class="fa fa-check-circle-o">
 		</i> Verifikasi</button>
 		</div>
 		<hr/>
 		</div>
-  		<button type="submit" name="submit" class="btn btn-sm btn-success" id="simpaneditpjl" value="edittrxitem" form="formtrxid"><i class="fa fa-save">
+		<input type="hidden" class="form-control" name="submit" id="submitEdit" value="edittrxitem" />
+  		<button type="button" name="submit" class="btn btn-sm btn-success" id="simpanedit" value="edittrxitem" form="formEdit"><i class="fa fa-save">
 		</i> Simpan</button>
-		<button type="submit" name="submit" class="btn  btn-sm btn-danger" id="hapustrxitem">Batal Transaksi Item</button>
+		<button type="button" name="submit" class="btn  btn-sm btn-danger" id="hapustrxitem">Batal Transaksi Item</button>
 
   	</div>
 	</div>
 	</div>
+	<?php echo form_close(); ?>
 	</div>
 	<div id="print" style="display:none;"></div>
   	<!-- end form edit -->			
@@ -283,31 +287,7 @@
 			}else{
 				$("#submit").val("tambah");
 				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
-					if(result.detail.length >0 ){
-						var AllItem = "";
-						TotalHarga = 0;// reset nilai yang sudah diambil dengan PHP
-						hargaModal = 0;
-						for (var x=0;x<result.detail.length;x++){
-							var data = result.detail[x];
-							var item = '<tr class="gradeU"><td>';
-							item += '<a href="#" data-toggle="modal" data-target="#myModaledit" id="btnShowitem" ideditpro="'+data.detailID +'" nampro="'+data.productName+'" harpro="'+data.detailPrice+'" qtypro="'+data.detailQty+'" nofakedit="<?php echo $trxid;?>" kdproduk="'+data.productBarcode +'">';
-							item += '<p>'+data.productName+'</p>';
-							item += '</a></i></b>';
-							item += '</td><input type="hidden" class="form-control" name="harga" value=" '+data.detailPrice+'" readonly />';
-							item += '<td><b>'+data.detailQty +'</b></td>';
-							item += '<td><input type="text"  class="form-control" name="subtotal" value=" '+data.detailSubtotal+'" readonly /></td>';
-							item += '<input type="hidden" name="qtyremove" id="qtyremove"></tr>';
-							AllItem +=item;
-							TotalHarga += parseInt(data.detailSubtotal);
-							hargaModal += parseInt(data.detailPrice);
-						}
-						$("#tableItem").html(AllItem);
-						$("#subtotal").val(TotalHarga);
-						$("#subtotal").number( true, 0 );
-						$("#hargaModal").val()
-						$('#diskon').trigger('keyup');
-						
-					}
+					loadDataItem(result);
 				},"json")
 				return false;	
 			}
@@ -322,8 +302,8 @@
 			hitung("");
 		})	
 		$("#bayartrx").click(function(){
+			$("#submitBayar").val("selesaitrx");
 			var DataForm = $("#formBayar").serialize();
-			$("#submit").val("selesaitrx");
 			if(TotalHarga <=0){
 				alert("Belum ada barang yang harus dibayar");
 			}else{
@@ -340,15 +320,72 @@
 			}
 			return false;	
 		})
-		$("#simpaneditpjl").click(function(){
-			
+		$("#simpanedit").click(function(){
+			$("#submitEdit").val("edittrxitem");
+			var DataForm = $("#formEdit").serialize();
+			if(TotalHarga <=0){
+				alert("Belum ada barang yang dipilih");
+			}else{
+				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
+					$('#myModaledit').modal('hide');
+					loadDataItem(result);
+				},"json")
+			}
 			return false;	
-		})
-		$("#bayartrx").click(function(){
-			
+		})	
+		$("#hapustrxitem").click(function(){
+			$('#verifikasi').show();
+			$('#supid').focus();
 			return false;	
-		})
+		});
+		$("#verifikasihapitem").click(function(){
+			$("#submitEdit").val("deltrxitem");
+			var DataForm = $("#formEdit").serialize();
+			$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
+				if(result.message !=""){
+					alert(result.message);
+				}else{
+					$('#myModaledit').modal('hide');
+					$('#verifikasi').hide();
+					loadDataItem(result);
+				}
+			},"json")
+			return false;	
+		});
+		
+		
+		
+		function loadDataItem(result){
+			if(result.detail.length >0 ){
+				var AllItem = "";
+				TotalHarga = 0;// reset nilai yang sudah diambil dengan PHP
+				hargaModal = 0;
+				for (var x=0;x<result.detail.length;x++){
+					var data = result.detail[x];
+					var item = '<tr class="gradeU"><td>';
+					item += '<a href="#" data-toggle="modal" data-target="#myModaledit" id="btnShowitem" ideditpro="'+data.detailID +'" nampro="'+data.productName+'" harpro="'+data.detailPrice+'" qtypro="'+data.detailQty+'" nofakedit="<?php echo $trxid;?>" kdproduk="'+data.productBarcode +'">';
+					item += '<p>'+data.productName+'</p>';
+					item += '</a></i></b>';
+					item += '</td><input type="hidden" class="form-control" name="harga" value=" '+data.detailPrice+'" readonly />';
+					item += '<td><b>'+data.detailQty +'</b></td>';
+					item += '<td><input type="text"  class="form-control" name="subtotal" value=" '+data.detailSubtotal+'" readonly /></td>';
+					item += '<input type="hidden" name="qtyremove" id="qtyremove"></tr>';
+
+					AllItem +=item;
+					TotalHarga += parseInt(data.detailSubtotal);
+					hargaModal += parseInt(data.detailPrice);
+				}
+				$("#tableItem").html(AllItem);
+				$("#subtotal").val(TotalHarga);
+				$("#subtotal").number( true, 0 );
+				$("#hargaModal").val()
+				$('#diskon').trigger('keyup');
+				
+			}
+		}
 	})
+		
+	
 	 
 	function hitung(val){
 		var valNew = $("#bayar").val()+""+val;
@@ -379,6 +416,7 @@
     }
 	}
 	</script>
+	
 	
 	
 	

@@ -258,14 +258,6 @@ $('body').on('click', '#btnShowitem', function(){
 					$('#kembali').text( val !== '' ? val : '(empty)' );
 				});
 				
-				$('#bayar').change(function(){
-					console.log('Second change event...');
-				});
-				
-				
-				
-				
-				
 				$('#bayar').on('keyup',function(){
 					
 					var bayar = $('#bayar').val();
@@ -296,10 +288,8 @@ $('body').on('click', '#btnShowitem', function(){
     </script>
     <script>
     $('#qty').on('keyup',function(){
-
      var valqty = $('#qty').val();
      $("#qtyremove").val(valqty);
-
    });
     </script>
 	<script>
@@ -345,18 +335,6 @@ $(document).ready(function() {
 </script>
 
 <script>
-$('body').on('click', '#bayartrx', function(){
-     document.getElementById("formtrxid").submit();
-    });
-    </script>
-	
-	<script>
-$('body').on('click', '#simpaneditpjl', function(){
-     document.getElementById("formtrxid").submit();
-    });
-    </script>
-	
-<script>
 $('body').on('click', '#btnShowtotaltrxmod', function(){
       var trxid = $(this).attr("trxid");
 	  $('#trxidclose').val(trxid);
@@ -364,12 +342,6 @@ $('body').on('click', '#btnShowtotaltrxmod', function(){
     });
     </script>
 	
-	<script>
-$('body').on('click', '#hapustrxitem', function(){
-     $('#verifikasi').show();
-	 $('#supid').focus();
-    });
-    </script>
 	
 	</body>
 </html>
