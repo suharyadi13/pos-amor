@@ -100,6 +100,10 @@ class Admin extends CI_Controller {
 		
 		$this->load->view('admin/template', $a);
 	}
+	function LoadNewTrx(){
+		$invno = $this->getNewTrxID(); // ambil no transaksi terbaru
+		redirect('4d111-t1272/?__fn='.$this->encryption->encode($invno).'&submit='.$this->encryption->encode("newtrx"));
+	}
 	function getNewTrxID(){
 		$trxid= mysql_fetch_array(mysql_query('SELECT * from as_sales_transactions order by trxID desc limit 1;'));
 		$trxdate = $trxid['trxDate'];

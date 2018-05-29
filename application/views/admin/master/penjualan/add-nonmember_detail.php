@@ -314,8 +314,9 @@
 		$("#bayartrx").click(function(){
 			$("#submitBayar").val("selesaitrx");
 			var DataForm = $("#formBayar").serialize();
-			if(TotalHarga <=0){
-				alert("Belum ada barang yang harus dibayar");
+			if(kembali <=0){
+				alert("Pembayaran belum cukup");
+				$("#bayar").focus();
 			}else{
 				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
 					$("#print").html(result);
@@ -324,7 +325,7 @@
 					w.print();
 					w.close();
 					$('#print').html("")
-					document.location.href =  "<?php  echo base_url('admin'); ?>"; 
+					document.location.href =  "<?php  echo base_url('admin/LoadNewTrx'); ?>"; 
 				})
 					
 			}
