@@ -288,6 +288,9 @@
 				$("#submit").val("tambah");
 				$.post("<?php echo '?__fn='.$this->encryption->encode($trxid).'&tgltrx='.$this->encryption->encode($trxDate).'' ?>",DataForm,function(result){
 					loadDataItem(result);
+					$("#kdproduk").val("");
+					$("#kodebarang").val("-");
+					$("#kodebarang").focus();
 				},"json")
 				return false;	
 			}
@@ -295,6 +298,13 @@
 			return false;
 		})
 		$("#diskon").keyup(function(){
+			var NilaiDiskon = parseInt($("#diskon").val()) * parseInt(TotalHarga) / 100;
+			TotalDiskon = parseInt(TotalHarga)-parseInt(NilaiDiskon);
+			$("#diskonTotal").val(TotalDiskon);
+			$("#diskonTotal").number( true, 0 );
+			hitung("");
+		})	
+		$("#bayar").keyup(function(){
 			var NilaiDiskon = parseInt($("#diskon").val()) * parseInt(TotalHarga) / 100;
 			TotalDiskon = parseInt(TotalHarga)-parseInt(NilaiDiskon);
 			$("#diskonTotal").val(TotalDiskon);
@@ -355,8 +365,6 @@
 		$("#simpaneditpjl").click(function(){
 				document.location.href =  "<?php  echo base_url('admin'); ?>"; 
 		});
-		
-		
 		
 		function loadDataItem(result){
 			if(result.detail.length >0 ){

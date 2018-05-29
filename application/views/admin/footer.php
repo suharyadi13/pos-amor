@@ -246,30 +246,10 @@ $('body').on('click', '#btnShowitem', function(){
     </script>
     <script>
     function parseCurrency( num ) {
-      return parseFloat( num.replace( /,/g, '') );
+		num = String(num);
+		return parseFloat( num.replace( /,/g, '') );
     }
-
-    $(function(){
-				// Set up the number formatting.
-				
-				$('#bayar').on('change',function(){
-					console.log('Change event.');
-					var val = $('#bayar').val();
-					$('#kembali').text( val !== '' ? val : '(empty)' );
-				});
-				
-				$('#bayar').on('keyup',function(){
-					
-					var bayar = $('#bayar').val();
-					var total = $('#total').val();
-					var val=parseCurrency(bayar)-parseCurrency(total);
-					$("#kembali").val(val);
-					$("#kembali").number( true, 0 );
-					
-				});
-				
-			});
-    </script>
+  </script>
     <script>
     $(document).ready(function() {
       $("#formtrxid").validate({
@@ -280,9 +260,10 @@ $('body').on('click', '#btnShowitem', function(){
         bayar:{
           required:'Tidak Boleh Kosong',
           number  :'Hanya boleh di isi Angka'},
-         
           success: function(label) {
-            label.text('').addClass('valid');}
+            label.text('').addClass('valid');
+			}
+	   }
           });
     });
     </script>
@@ -313,7 +294,7 @@ $(document).ready(function() {
         "order": [], //Initial no order.
 		"columns": [
         { "data": "trxname" },
-        { "data": "trxadd" }, ]
+        { "data": "trxadd" }, ],
  
         // Load data for the table's content from an Ajax source
         "ajax": {
