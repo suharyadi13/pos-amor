@@ -193,7 +193,7 @@
 		<i class="fa fa-save"></i> Bayar</button>
 		</div>
 		<div class="col-md-4">
-		<button type="submit" name="submit" class="btn btn-primary" id="simpaneditpjl" value="edittrx">Simpan</button>
+		<button type="button" name="submit" class="btn btn-primary" id="simpaneditpjl" value="edittrx">Simpan</button>
 		</div>
 		<div class="col-md-4">
 		<a href="<?php echo base_url(); ?>admin/batal_trxpj?nofak=<?php echo $trxid;?>" onclick="javascript: return confirm('Anda akan membatalkan transaksi dengan nomor faktur : <?php echo $trxid; ?> ?')" class="btn btn-danger btn-sm" id="canceltrx"><i class="fa fa-arrow-circle-left"></i> Batalkan</a>
@@ -351,6 +351,9 @@
 				}
 			},"json")
 			return false;	
+		});
+		$("#simpaneditpjl").click(function(){
+				document.location.href =  "<?php  echo base_url('admin'); ?>"; 
 		});
 		
 		

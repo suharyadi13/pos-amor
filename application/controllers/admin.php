@@ -241,6 +241,9 @@ class Admin extends CI_Controller {
 		$identity=$this->session->userdata('identityID');
 		$user=$this->session->userdata('admin_user');
 		$invoiceID = $this->encryption->decode($this->input->get('__fn'));
+		if($this->encryption->decode($this->input->get('120vac'))!=""){
+			$invoiceID = $this->encryption->decode($this->input->get('120vac'));
+		}
 		$tgltrx = $this->encryption->decode($this->input->get('_t_l_x'));
 		$a['trxid'] = $invoiceID;
 		$a['tgltrx'] = $tgltrx;
@@ -282,8 +285,6 @@ class Admin extends CI_Controller {
 			$this->load->view('admin/template',$a);
 			
 		}
-		
-		
 		
 		else if($a['submit'] == "tambah")
 		{
